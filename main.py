@@ -15,12 +15,12 @@ import websockets
 # ======== تنظیمات ========
 SYMBOLS = ['BTCUSDT']  # فقط بیت‌کوین
 
-# توصیه امنیتی: این‌ها را به صورت متغیر محیطی ست کن؛ اما برای راحتی اجرا، مقادیر پیش‌فرض گذاشته شده
+# توصیه امنیتی: این‌ها را بهتر است به صورت متغیر محیطی ست کنید
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN', '8136421090:AAFrb8RI6BQ2tH49YXX_5S32_W0yWfT04Cg')
 TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID', '570096331')
 
 PORT = int(os.getenv('PORT', 8080))
-BINANCE_WS_BASE = 'wss://stream.binance.com:443/stream?streams='  # Binance Global
+BINANCE_WS_BASE = 'wss://stream.binance.com:9443/ws/'  # فقط BTC Stream
 
 LOG_FILE = 'whalepulse_pro.log'
 
@@ -43,6 +43,26 @@ ALERT_COOLDOWN = int(os.getenv('ALERT_COOLDOWN', '900'))    # ثانیه (پیش
 # ذخیره CSV
 CSV_FILE = os.getenv('CSV_FILE', 'market_data.csv')
 CSV_SAVE_INTERVAL = int(os.getenv('CSV_SAVE_INTERVAL', '30'))  # هر چند ثانیه یکبار برای هر نماد ثبت شود
+
+# متغیرهای گلوبال
+last_report_time = 0
+last_hourly_report_time = 0
+last_report_data = {}
+
+# وضعیت اپ
+app_status = {
+    'status': 'starting',
+    'websocket_connected': False,
+    'last_message_time': None,
+    'messages_processed': 0,
+    'last_telegram_send': None,
+    'uptime_start': datetime.now()
+}
+
+# وضعیت بازار برای داشبورد و API
+market_state = {}                 # {'BTCUSDT': {'price':..., 'volume':..., 'price_change_percent':..., 'updated_at':...}}
+last_alert_time = {}              # زمان آخرین هشدار برای هر نماد
+last_csv_write = {}               # زمان آخرین ثبت CSV برای هر نماد
 
 # متغیرهای گلوبال
 last_report_time = 0
